@@ -1,8 +1,16 @@
-﻿# Source from 
+﻿# Source from
 # https://blog.netways.de/2011/11/07/odbc-datenbankzugriff-mit-powershell/
 
-#DSN angeben, dabei sind _SERVERNAME_, _DATABASE_, _DBUSER_ und _DBPASSWORD_ jeweils zu ersetzen
-$DBDSN="Driver={SQL Server};Server=_SERVERNAME_;Database=_DATABASE_;UID=_DBUSER_;PWD=_DBPASSWORD_;"
+Param(
+[string]$server,
+[string]$database,
+[string]$uid,
+[string]$pwd,
+[string]$query,
+[string]$critical # warn if x is greater than
+)
+
+$DBDSN="Driver={SQL Server};Server=$server;Database=$database;UID=$uid;PWD=$pwd;"
 
 #Datenbankverbindungsobjekt instanzieren
 $DBConnection=New-Object System.Data.Odbc.OdbcConnection
@@ -20,21 +28,28 @@ $DBCommand=New-Object System.Data.Odbc.OdbcCommand
 $DBCommand.Connection=$DBConnection
 
 #Query angeben, dabei muss _QUERY_ durch das gewünschte Query ersetzt werden
-$DBCommand.CommandText="_QUERY_"
+$DBCommand.CommandText="$query"
 
 #Ein Reader-Objekt erzeugen
 $DBResult=$DBCommand.ExecuteReader()
 
 #Anzahl der Rows zählen
-#DBCounter=$DBResult.FieldCount
+$DBCounter=$DBResult.FieldCount
 
 #Rows durchiterieren
 while ($DBResult.Read()) {
 	for ($i = 0; $i -lt $DBCounter; $i++) {
-		#Rows formatiert ausgeben
-		@{ $DBResult.GetName($i) = $DBResult.GetValue($i); }
+		if ($DBResult.GetValue($i) -lt $critical) {
+		    Write-Host "OK -" $DBResult.GetValue($i)
+		    exit 0
+		}
+
+		Else {
+		    Write-Host "Critical -" $DBResult.GetValue($i)
+		    exit 2
+		}
 	}
 }
 
 #Datenbankverbindung schließen
-DBConnection.Close()
+$DBConnection.Close()
