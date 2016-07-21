@@ -40,12 +40,14 @@ $DBCounter=$DBResult.FieldCount
 while ($DBResult.Read()) {
 	for ($i = 0; $i -lt $DBCounter; $i++) {
 		if ($DBResult.GetValue($i) -lt $critical) {
-		    Write-Host "OK -" $DBResult.GetValue($i)
+		    $result = $DBResult.GetValue($i)
+		    Write-Host "OK -" $result"|query="$result";"
 		    exit 0
 		}
 
 		Else {
-		    Write-Host "Critical -" $DBResult.GetValue($i)
+	            $result = $DBResult.GetValue($i)
+		    Write-Host "Critical -" $result"|query="$result";"
 		    exit 2
 		}
 	}
