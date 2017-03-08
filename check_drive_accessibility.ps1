@@ -15,6 +15,6 @@ elseif ($? -eq "TRUE") {
     }
 
 else {
-    Write-Host "$drive drive NOT Not Accessible / Problems"
+    Write-Host "$drive drive NOT Accessible / Problems"
     exit 2
     }
