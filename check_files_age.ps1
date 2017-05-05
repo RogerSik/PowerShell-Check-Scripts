@@ -9,12 +9,12 @@ $Status=Get-ChildItem $Path | where-object {(new-timespan $_.LastWriteTime).minu
 
 
 if (!$Status) {
-    Write-Host "OK - No files older then $critical minutes found"
+    Write-Host "OK - No files older than $critical minutes found"
     exit 0
 }
 
 elseif ($Status) {
-    Write-Host "Critical - Files older then $critical minutes found"
+    Write-Host "Critical - Files older than $critical minutes found"
     $Status | Select Name, LastWriteTime
     exit 2
 }
