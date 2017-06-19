@@ -42,19 +42,19 @@ while ($DBResult.Read()) {
 	for ($i = 0; $i -lt $DBCounter; $i++) {
 		if ($DBResult.GetValue($i) -lt $warning) {
 		    $result = $DBResult.GetValue($i)
-		    Write-Host "OK -" $result"|query="$result";"
+		    Write-Host "OK -" $result"|query="$result";$warning;$critical"
 		    exit 0
 		}
 
 		ElseIf ($DBResult.GetValue($i) -lt $critical) {
 		    $result = $DBResult.GetValue($i)
-		    Write-Host "Warning -" $result"|query="$result";"
+		    Write-Host "Warning -" $result"|query="$result";$warning;$critical"
 		    exit 1
 		}
 
 		Else {
 	            $result = $DBResult.GetValue($i)
-		    Write-Host "Critical -" $result"|query="$result";"
+		    Write-Host "Critical -" $result"|query="$result";$warning;$critical"
 		    exit 2
 		}
 	}
