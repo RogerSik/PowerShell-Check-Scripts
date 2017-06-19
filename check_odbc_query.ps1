@@ -7,7 +7,8 @@ Param(
 [string]$uid,
 [string]$pwd,
 [string]$query,
-[string]$critical # warn if x is greater than
+[string]$warning, # warning if x is greater than
+[string]$critical # critical if x is greater than
 )
 
 $DBDSN="Driver={SQL Server};Server=$server;Database=$database;UID=$uid;PWD=$pwd;"
@@ -39,10 +40,16 @@ $DBCounter=$DBResult.FieldCount
 #Rows durchiterieren
 while ($DBResult.Read()) {
 	for ($i = 0; $i -lt $DBCounter; $i++) {
-		if ($DBResult.GetValue($i) -lt $critical) {
+		if ($DBResult.GetValue($i) -lt $warning) {
 		    $result = $DBResult.GetValue($i)
 		    Write-Host "OK -" $result"|query="$result";"
 		    exit 0
+		}
+
+		ElseIf ($DBResult.GetValue($i) -lt $critical) {
+		    $result = $DBResult.GetValue($i)
+		    Write-Host "Warning -" $result"|query="$result";"
+		    exit 1
 		}
 
 		Else {
